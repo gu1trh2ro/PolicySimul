@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Scenario {
+  id         String   @id @default(cuid())
+  ownerId    String
+  name       String
+  payload    Json
+  isPrivate  Boolean  @default(true)
+  shareId    String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model PolicyTemplate {
+  id        String   @id @default(cuid())
+  ownerId   String
+  name      String
+  params    Json
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+

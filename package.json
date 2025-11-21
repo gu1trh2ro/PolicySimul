@@ -1,0 +1,35 @@
+{
+  "name": "policysimul",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "db:seed": "node --env-file=.env scripts/seed.mjs"
+  },
+  "dependencies": {
+    "next": "14.2.10",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "zod": "^3.23.8",
+    "jose": "^5.9.4",
+    "@prisma/client": "^5.19.1",
+    "next-auth": "^4.24.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.1",
+    "@types/react": "^18.3.5",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.10",
+    "typescript": "^5.6.3",
+    "prisma": "^5.19.1",
+    "vitest": "^1.6.0",
+    "@playwright/test": "^1.48.2"
+  }
+}
+
