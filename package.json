@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start -p 3000",
     "lint": "next lint",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "db:seed": "node --env-file=.env scripts/seed.mjs"
+    "db:seed": "node --env-file=.env scripts/seed.mjs",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "next": "14.2.10",
