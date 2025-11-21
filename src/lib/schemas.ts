@@ -1,21 +1,22 @@
 import { z } from "zod";
 
-export const CalculationInputSchema = z
-  .object({
-    monthlyIncome: z.number().min(0).max(10_000_000_000),
-    existingDebtBalance: z.number().min(0).max(10_000_000_000),
-    existingMonthlyPayment: z.number().min(0).max(10_000_000_000),
-    desiredLoanAmount: z.number().min(0).max(10_000_000_000),
-    desiredLoanTermMonths: z.number().int().min(1).max(1200),
-    interestRatePercent: z.number().min(0).max(50),
-    dsrLimitPercent: z.number().min(1).max(100),
-    loanType: z.enum(["unsecured", "mortgage"]).default("unsecured"),
-    collateralValue: z.number().min(0).max(10_000_000_000).optional(),
-    ltvLimitPercent: z.number().min(1).max(100).optional(),
-    rateMode: z.enum(["fixed", "twoStep"]).default("fixed"),
-    stepMonth: z.number().int().min(1).max(1200).optional(),
-    ratePercentAfter: z.number().min(0).max(50).optional()
-  })
+const CalculationInputBaseSchema = z.object({
+  monthlyIncome: z.number().min(0).max(10_000_000_000),
+  existingDebtBalance: z.number().min(0).max(10_000_000_000),
+  existingMonthlyPayment: z.number().min(0).max(10_000_000_000),
+  desiredLoanAmount: z.number().min(0).max(10_000_000_000),
+  desiredLoanTermMonths: z.number().int().min(1).max(1200),
+  interestRatePercent: z.number().min(0).max(50),
+  dsrLimitPercent: z.number().min(1).max(100),
+  loanType: z.enum(["unsecured", "mortgage"]).default("unsecured"),
+  collateralValue: z.number().min(0).max(10_000_000_000).optional(),
+  ltvLimitPercent: z.number().min(1).max(100).optional(),
+  rateMode: z.enum(["fixed", "twoStep"]).default("fixed"),
+  stepMonth: z.number().int().min(1).max(1200).optional(),
+  ratePercentAfter: z.number().min(0).max(50).optional()
+});
+
+export const CalculationInputSchema = CalculationInputBaseSchema
   .superRefine((v, ctx) => {
     if (!(v.monthlyIncome > 0)) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "월 소득은 0보다 커야 합니다.", path: ["monthlyIncome"] });
@@ -32,7 +33,7 @@ export const CalculationInputSchema = z
     }
   });
 
-export const PolicyParamsSchema = CalculationInputSchema.pick({
+export const PolicyParamsSchema = CalculationInputBaseSchema.pick({
   interestRatePercent: true,
   dsrLimitPercent: true,
   loanType: true,
