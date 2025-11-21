@@ -22,6 +22,9 @@ export default function Page() {
     loanType: "unsecured" | "mortgage";
     collateralValue?: number;
     ltvLimitPercent?: number;
+    rateMode: "fixed" | "twoStep";
+    stepMonth?: number;
+    ratePercentAfter?: number;
   };
 
   const beforeDefaults: FormValues = {
