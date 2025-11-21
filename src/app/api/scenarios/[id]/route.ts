@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   if (!sess) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const sc = await prisma.scenario.findUnique({ where: { id: params.id } });
   if (!sc || sc.ownerId !== sess.sub) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(sc);
+  return NextResponse.json({ ...sc, payload: JSON.parse(sc.payload) });
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -25,8 +25,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const parsed = ScenarioSaveSchema.safeParse(json);
   if (!parsed.success) return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 });
   const { name, payload } = parsed.data;
-  const updated = await prisma.scenario.update({ where: { id: params.id }, data: { name, payload } });
-  return NextResponse.json(updated);
+  const updated = await prisma.scenario.update({ where: { id: params.id }, data: { name, payload: JSON.stringify(payload) } });
+  return NextResponse.json({ ...updated, payload: JSON.parse(updated.payload) });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {

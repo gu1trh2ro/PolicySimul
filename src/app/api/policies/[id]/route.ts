@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   if (!sess) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const t = await prisma.policyTemplate.findUnique({ where: { id: params.id } });
   if (!t || t.ownerId !== sess.sub) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(t);
+  return NextResponse.json({ ...t, params: JSON.parse(t.params) });
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
@@ -25,8 +25,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const parsed = PolicyTemplateSaveSchema.safeParse(json);
   if (!parsed.success) return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 });
   const { name, params: paramsJson } = parsed.data;
-  const updated = await prisma.policyTemplate.update({ where: { id: params.id }, data: { name, params: paramsJson } });
-  return NextResponse.json(updated);
+  const updated = await prisma.policyTemplate.update({ where: { id: params.id }, data: { name, params: JSON.stringify(paramsJson) } });
+  return NextResponse.json({ ...updated, params: JSON.parse(updated.params) });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {

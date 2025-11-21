@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
   const sess = await requireSession(req);
   if (!sess) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const list = await prisma.policyTemplate.findMany({ where: { ownerId: sess.sub }, orderBy: { updatedAt: "desc" } });
-  return NextResponse.json(list);
+  const parsed = list.map(p => ({ ...p, params: JSON.parse(p.params) }));
+  return NextResponse.json(parsed);
 }
 
 export async function POST(req: NextRequest) {
@@ -22,8 +23,8 @@ export async function POST(req: NextRequest) {
   const parsed = PolicyTemplateSaveSchema.safeParse(json);
   if (!parsed.success) return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 });
   const { name, params } = parsed.data;
-  const created = await prisma.policyTemplate.create({ data: { name, params, ownerId: sess.sub } });
-  return NextResponse.json(created);
+  const created = await prisma.policyTemplate.create({ data: { name, params: JSON.stringify(params), ownerId: sess.sub } });
+  return NextResponse.json({ ...created, params: JSON.parse(created.params) });
 }
 
 
